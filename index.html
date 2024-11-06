@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إصدار فاتورة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #555;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input:focus, select:focus {
+            border-color: #007bff;
+            background-color: #e7f1ff;
+            outline: none;
+        }
+        .transaction-count {
+            margin-top: 10px;
+        }
+        .invoice-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .invoice-actions button {
+            flex: 1;
+            margin-right: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .invoice-actions button:hover {
+            background: #218838;
+        }
+        .total-amount {
+            font-size: 24px; /* حجم كبير */
+            color: red; /* لون أحمر */
+            text-align: center;
+            margin-top: 20px;
+            display: none; /* إخفاءه في البداية */
+        }
+        .invoice {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center; /* توسيط النص */
+        }
+        .invoice h2 {
+            font-size: 28px;
+            color: #333;
+            margin: 10px 0;
+        }
+        .invoice p {
+            margin: 10px 0;
+        }
+        .loading-spinner {
+            display: none;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إصدار فاتورة</h1>
+        <form id="invoiceForm">
+            <label for="clientName">اسم العميل:</label>
+            <input type="text" id="clientName" required>
+
+            <label for="invoiceAmount">المبلغ:</label>
+            <input type="number" id="invoiceAmount" required>
+
+            <label for="transactionType">نوع المعاملة:</label>
+            <select id="transactionType" required>
+                <option value="">اختر نوع المعاملة</option>
+                <option value="سكليف">سكليف</option>
+                <option value="مرافق مريض">مرافق مريض</option>
+                <option value="مشهد مراجعة">مشهد مراجعة</option>
+            </select>
+
+            <div class="transaction-count">
+                <label for="transactionCount">العدد:</label>
+                <input type="number" id="transactionCount" required>
+            </div>
+
+            <div class="invoice-actions">
+                <button type="submit">إنشاء فاتورة</button>
+                <button type="button" id="printInvoice" style="display: none;">طباعة الفاتورة</button>
+            </div>
+        </form>
+
+        <div class="loading-spinner" id="loadingSpinner" style="display: none;"></div>
+
+        <div class="total-amount" id="totalAmount"></div>
+        
+        <div class="invoice" id="invoiceDisplay" style="display: none;">
+            <h2>فاتورة</h2>
+            <p id="displayClientName"></p>
+            <p id="displayInvoiceAmount"></p>
+            <p id="displayTransactionType"></p>
+            <p id="displayTransactionCount"></p>
+            <p id="invoiceDateTime"></p>
+            <p style="text-align: center; font-weight: bold;">مركز الزاهر</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('invoiceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const clientName = document.getElementById('clientName').value;
+            const invoiceAmount = document.getElementById('invoiceAmount').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const transactionCount = document.getElementById('transactionCount').value;
+
+            // إظهار الفاتورة
+            document.getElementById('displayClientName').innerText = 'اسم العميل: ' + clientName;
+            document.getElementById('displayInvoiceAmount').innerText = invoiceAmount + ' ريال'; // بدون كلمة "المبلغ"
+            document.getElementById('displayTransactionType').innerText = 'نوع المعاملة: ' + transactionType;
+            document.getElementById('displayTransactionCount').innerText = 'العدد: ' + transactionCount;
+
+            // إظهار المبلغ بشكل بارز
+            document.getElementById('totalAmount').innerText = 'المبلغ: ' + invoiceAmount + ' ريال';
+            document.getElementById('totalAmount').style.display = 'block';
+
+            // إظهار التاريخ والوقت
+            const currentDateTime = new Date().toLocaleString('ar-SA', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('invoiceDateTime').innerText = 'تاريخ ووقت الإصدار: ' + currentDateTime;
+
+            // إظهار قسم الفاتورة
+            document.getElementById('invoiceDisplay').style.display = 'block';
+            document.getElementById('printInvoice').style.display = 'inline-block';
+        });
+
+        document.getElementById('printInvoice').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf; // Load jsPDF
+            const doc = new jsPDF();
+            doc.setFontSize(18);
+            doc.text('فاتورة', 20, 20);
+            doc.setFontSize(14);
+            doc.text('اسم العميل: ' + document.getElementById('displayClientName').innerText.split(': ')[1], 20, 30);
+            doc.text('المبلغ: ' + document.getElementById('displayInvoiceAmount').innerText, 20, 40);
+            doc.text('نوع المعاملة: ' + document.getElementById('displayTransactionType').innerText.split(': ')[1], 20, 50);
+            doc.text('العدد: ' + document.getElementById('displayTransactionCount').innerText.split(': ')[1], 20, 60);
+            doc.text('تاريخ ووقت الإصدار: ' + document.getElementById('invoiceDateTime').innerText.split(': ')[1], 20, 70);
+            doc.text('مركز الزاهر', 20, 80);
+            doc.save('فاتورة.pdf');
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+</body>
+</html>
