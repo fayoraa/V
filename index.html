@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إصدار فاتورة</title>
+    <title>منصة الزاهر</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
         }
         h1 {
             text-align: center;
-            color: #333;
+            color: #ff1f00;
             margin-bottom: 30px;
         }
         label {
@@ -34,16 +34,18 @@
             font-weight: bold;
         }
         input, select {
+            font-family: 'Cairo', sans-serif;
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
+            padding: 4px;
+            margin-top: 1px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 13px;
         }
         input:focus, select:focus {
+            font-family: 'Cairo', sans-serif;
             border-color: #007bff;
-            background-color: #e7f1ff;
+            background-color: #fff;
             outline: none;
         }
         .transaction-count {
@@ -55,15 +57,16 @@
             margin-top: 20px;
         }
         .invoice-actions button {
+            font-family: 'Cairo', sans-serif;
             flex: 1;
-            margin-right: 10px;
+            margin-right: 60px;
             background: #28a745;
             color: white;
             border: none;
-            padding: 10px;
-            border-radius: 4px;
+            padding: 5px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
         }
         .invoice-actions button:hover {
             background: #218838;
@@ -113,7 +116,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>إصدار فاتورة</h1>
+        <h1> الـزاهر </h1>
         <form id="invoiceForm">
             <label for="clientName">اسم العميل:</label>
             <input type="text" id="clientName" required>
